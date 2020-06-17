@@ -8,8 +8,8 @@ fn main() {
     let mut table = table::Table::new();
     let mut input = HashMap::new();
     input.insert(0,1);
-    input.insert(1,0);
-    let mut output= HashMap::new();
+    input.insert(1,1);
+    let mut output = HashMap::new();
     output.insert(0,1);
     let expression = expression::Expression::new(input,output);
     table.evaluator.add_expression(expression);

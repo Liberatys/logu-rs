@@ -42,7 +42,6 @@ impl Evaluator{
                 let mut binary_vec:Vec<&str> = binary_sequence.split("").collect();
                 // remove all empty strings in vec
                 binary_vec.retain(|&x| x != "");
-                println!("{:?}",binary_vec);
                 for y in 0..binary_vec.len(){
                     let transfered_index_position = hor_vector_length - y - 1 - self.outputs.len(); // subtract with the length of output to get the first starting integer for input
                     let bit_value : i32 = binary_vec[binary_vec.len() - 1 - y].parse().unwrap(); // translate the index of the first bit value to the index of the array
@@ -52,10 +51,23 @@ impl Evaluator{
         return evaluation_matrix;
     }
 
-    pub fn evaluate_matrix(&self){
+    pub fn evaluate_matrix(&self) -> Vec<Vec<i32>>{
         let mut evaluation_matrix = self.generate_default_bit_table();
-        let hor_vector_length = self.inputs.len() + self.outputs.len();
         let vec_vector_length = i32::pow(2,self.inputs.len() as u32);
         let input_index_range = self.inputs.len();
+        for x in 0..vec_vector_length{
+            for t in 0..self.expressions.len(){
+            let result = self.expressions[t as usize].evaluate_expression(&evaluation_matrix[x as usize]);
+            match result{
+                expression::ExpressionResult::Ok(v) =>{
+                    for (key, value) in v {
+                        evaluation_matrix[x as usize][(key + input_index_range as i32)as usize] =value
+                    }
+                },
+                expression::ExpressionResult::NONE=> continue,
+            }
+            }
+        }
+        return evaluation_matrix;
     }
 }
