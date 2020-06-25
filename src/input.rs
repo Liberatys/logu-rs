@@ -1,23 +1,20 @@
-pub enum EntryType{
+pub enum EntryType {
     INPUT,
     OUTPUT,
 }
 
-
-pub struct Entry{
-    name: String,
+pub struct Entry {
+    pub name: String,
     id: i32,
     entryType: EntryType,
 }
 
-impl Entry{
-
-    pub fn new(name: String, id: i32, entryType: EntryType) -> Entry
-    {
-        let entry = Entry{
+impl Entry {
+    pub fn new(name: String, id: i32, entryType: EntryType) -> Entry {
+        let entry = Entry {
             name,
             id,
-            entryType
+            entryType,
         };
         return entry;
     }
