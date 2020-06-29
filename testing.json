@@ -1,10 +1,10 @@
 {
 	"inputs": [
 		"Switch",
-		"Lichtschranke"
+		"Sensor"
 	],
 	"outputs": [
-		"LICHT"
+		"LED"
 	],
 	"expressions": [
 		{

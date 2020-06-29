@@ -2,6 +2,10 @@
 
 Generates a truth table based on the input and output conditions.
 
+Had to do it once in school like 1 or 2 years ago and wanted to have a tool that would do the job for the rest of my life.
+
+And now it even takes json as input.
+
 ## What is a Truth Table
 
 	We have 2 buttons -> input.
