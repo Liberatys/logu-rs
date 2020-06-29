@@ -42,63 +42,43 @@ fn run_table_generation(input: Option<Vec<&String>>, output: Option<Vec<&String>
             let input_file_content = reader::read_json_file(v[0].as_ref());
             let parsed = json::parse(input_file_content.as_ref()).unwrap();
             let mut table = table::Table::new();
-            let mut inputs = &parsed["inputs"];
-            let mut outputs = &parsed["outputs"];
             let mut expressions = &parsed["expressions"];
-            match inputs {
-                json::JsonValue::Array(v) => {
-                    for x in 0..v.len() {
-                        table.evaluator.add_input(input::Entry::new(
-                            String::from(v[x].as_str().unwrap()),
-                            x as i32,
-                            input::EntryType::INPUT,
-                        ));
-                    }
-                }
-                _ => {}
+            let inputs = unwrap_json_format_into_vec(&parsed, "inputs");
+            let outputs = unwrap_json_format_into_vec(&parsed, "outputs");
+            for x in 0..inputs.len() {
+                table.evaluator.add_input(input::Entry::new(
+                    inputs[x].to_string(),
+                    x as i32,
+                    input::EntryType::INPUT,
+                ));
             }
-            match outputs {
-                json::JsonValue::Array(v) => {
-                    for x in 0..v.len() {
-                        table.evaluator.add_output(input::Entry::new(
-                            String::from(v[x].as_str().unwrap()),
-                            x as i32,
-                            input::EntryType::OUTPUT,
-                        ));
-                    }
-                }
-                _ => {}
+            for x in 0..outputs.len() {
+                table.evaluator.add_output(input::Entry::new(
+                    outputs[x].to_string(),
+                    x as i32,
+                    input::EntryType::OUTPUT,
+                ));
             }
             match expressions {
                 json::JsonValue::Array(v) => {
                     for x in 0..v.len() {
                         let mut input_hash = HashMap::<i32, i32>::new();
                         let mut output_hash = HashMap::<i32, i32>::new();
-                        let inner_inputs = &v[x]["inputs"];
-                        let inner_outputs = &v[x]["outputs"];
-                        match inner_inputs {
-                            json::JsonValue::Array(v) => {
-                                for x in 0..v.len() {
-                                    let values: Vec<&str> =
-                                        v[x].as_str().unwrap().split("=").collect();
-                                    let first = values[0].parse::<i32>().unwrap();
-                                    let second = values[1].parse::<i32>().unwrap();
-                                    input_hash.insert(first, second);
-                                }
-                            }
-                            _ => {}
+                        let inner_inputs = unwrap_json_format_into_vec(&v[x], "inputs");
+                        let inner_outputs = unwrap_json_format_into_vec(&v[x], "outputs");
+
+                        for x in 0..inner_inputs.len() {
+                            let values: Vec<&str> = inner_inputs[x].split("=").collect();
+                            let first = values[0].parse::<i32>().unwrap();
+                            let second = values[1].parse::<i32>().unwrap();
+                            input_hash.insert(first, second);
                         }
-                        match inner_outputs {
-                            json::JsonValue::Array(v) => {
-                                for x in 0..v.len() {
-                                    let values: Vec<&str> =
-                                        v[x].as_str().unwrap().split("=").collect();
-                                    let first = values[0].parse::<i32>().unwrap();
-                                    let second = values[1].parse::<i32>().unwrap();
-                                    output_hash.insert(first, second);
-                                }
-                            }
-                            _ => {}
+
+                        for x in 0..outputs.len() {
+                            let values: Vec<&str> = inner_outputs[x].split("=").collect();
+                            let first = values[0].parse::<i32>().unwrap();
+                            let second = values[1].parse::<i32>().unwrap();
+                            output_hash.insert(first, second);
                         }
                         table
                             .evaluator
@@ -117,3 +97,17 @@ fn run_table_generation(input: Option<Vec<&String>>, output: Option<Vec<&String>
     }
 }
 
+fn unwrap_json_format_into_vec(value: &json::JsonValue, name: &str) -> Vec<String> {
+    let mut result_vec: Vec<String> = Vec::new();
+    match &value[name] {
+        json::JsonValue::Array(array) => {
+            for x in 0..array.len() {
+                result_vec.push(array[x].as_str().unwrap().to_owned());
+            }
+        }
+        _ => {
+            return result_vec;
+        }
+    }
+    return result_vec;
+}
