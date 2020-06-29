@@ -1,0 +1,20 @@
+{
+	"inputs": [
+		"Switch",
+		"Lichtschranke"
+	],
+	"outputs": [
+		"LICHT"
+	],
+	"expressions": [
+		{
+			"inputs": [
+				"0=1",
+				"1=1"
+			],
+			"outputs": [
+				"0=1"
+			]
+		}
+	]
+}
